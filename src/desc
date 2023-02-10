@@ -1,0 +1,5 @@
+# Blog Title
+
+This is a short description of the blog. It would appear on the top of the homepage. The file is assumed as a Markdown file, so you can use any Markdown syntax supported by [Pandoc](pandoc.org). For example, I usually add a horizontal separator at the end of every desc file to separate this text with the file listings.
+
+---
