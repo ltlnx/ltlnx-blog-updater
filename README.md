@@ -2,7 +2,7 @@
 This is my blog updater: it takes a source directory with Markdown files, a "header" and a "footer", converts them to HTML, and copies them to the desired destination directory.
 
 ### Prerequisites
-The script currently assumes a UNIX-like environment with GNU `grep` and `sed`. I may turn some expressions into perl expressions for better compatibility. Also, `pandoc` should be in your path; please see [pandoc.org](pandoc.org) for install instructions.
+The script currently assumes a UNIX-like environment with GNU `grep` and `sed`. I may turn some expressions into perl expressions for better compatibility. Also, `pandoc` should be in your path; please see [pandoc.org](https://pandoc.org) for install instructions.
 
 You should set up two directories in the same directory as the script: `src` and `pages`. Also in the same directory, add a `style.css` file if you want to apply styles to pages. In the `src` directory, there should be two files: `header` and `footer`, which corresponds to the top and bottom of all HTML files.
 
