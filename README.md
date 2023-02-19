@@ -10,5 +10,7 @@ In the `src` directory, you may add directories which would become categories af
 
 This repo contains a minimal example for all of the above. After cloning, first modify two places: the value of `vroot` in `update.sh`, and the `href` value in `style.css` to reflect the actual location of the files, then run `update.sh` directly and see what appears in the `pages` directory. After that, you can modify the script and files to fit your needs.
 
+For more info see my blog post about it: <https://ltlnx.tw/software/blog-generator.html>
+
 ### Contributing / Bug reports
 This script currently doesn't accept pull requests, but you're welcome to report bugs in Github Issues or directly to ltlnx dot tw at gmail dot com. Thanks for discovering and using my script!
