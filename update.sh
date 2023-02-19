@@ -7,19 +7,27 @@ main() {
     # naming scheme: global vars start with v; part of paths have the suffix "name"
     vargs=$(argsparse "$@") || die "Failed to parse arguments"
     vblogname="ltlnx"
-    vroot="/home/ltlnx/Documents/Blog/ltlnx-blog-updater"
+    vroot="/home/ltlnx/Documents/Blog"
     vsrcname="src"
     vdstname="pages"
-    vdotfiles="$vroot/$vsrcname/.files"
-    vstylelocation="$vroot/style.css"
+    vstyle="$vroot/style.css"
     vbackupdirname="backup"
+    vheadername="header"
+    vfootername="footer"
+    vreleaseheaderprefix="release-"
+    vdotfiles="$vroot/$vsrcname/.files"
+    vmdconvcommand="$vroot/md2html"
+    which $vmdconvcommand >/dev/null || which pandoc >/dev/null \
+        && vmdconvcommand="pandoc -f markdown -t html" \
+        || die "Markdown conversion program not found"
+    # start profiler
+    # PS4='+ $(date "+%s.%N")\011 '
+    # exec 3>&2 2>$vroot/profiler/bashstart.$$.log
+    # set -x
     # since we are moving residue files into this dir instead of deleting
     # them, the script will create the dir if it doesn't exist to minimize
     # file loss
     mkdir -p "$vroot/$vbackupdirname"
-    vheadername="header"
-    vfootername="footer"
-    vreleaseheaderprefix="release-"
     vcurrentfilelist="$(find_exclusion "$vroot/$vsrcname")"
     vcopylist=""
     vremovelist=""
@@ -47,20 +55,25 @@ main() {
     vfdiff=$(diff $vdotfiles <(echo "$vcurrentfilelist"))
     vfold=$(echo -e "$vfdiff" | grep -Po "^< \K.*$")
     vfnew="$(echo -e "$(echo -e "$vfdiff" | grep -Po "^> \K.*$")\n$(find_exclusion "$vroot/$vsrcname" -newer "$vdotfiles")" | grep . | sort -u)"
-    vdirlist="$(get_dirs "$(cat <(echo -e "$vfnew") <(echo -e "$vfold") | grep -v "/res")")"\
+    # mandate the rebuild of the main index when there are changed files
+    # this would stay here until I think of a better algorithm
+    if (echo -e "$vfnew\n$vfold" | grep -q "$vroot/$vsrcname"); then
+        vdirlist="$vroot/$vsrcname"
+    fi
+    vdirlist="$vdirlist $(get_dirs "$(cat <(echo -e "$vfnew") <(echo -e "$vfold"))")" \
         || vdirlist="$vfulldirlist"
-    # we're going to build all file indices to make sure indice builds
-    # have the correct info, but only build indices for dirs with changed files
-    for dir1 in $vfulldirlist; do
-        build_fileindex $dir1 > "$dir1/.fileindex"
-    done
-    for dir2 in $vdirlist; do
-        vcopylist="$vcopylist${dir2}/index.html\n"
-        build_index $dir2 > "$dir2/index.md"
-        mdtohtml "$dir2/index.md" > "$dir2/index.html" || die "Failed to convert $dir2 index to HTML"
-    done
     # build html files for new or changed markdown files
     if [ "$vfnew" ]; then
+        # we're going to build all file indices to make sure indice builds
+        # have the correct info, but only build indices for dirs with changed files
+        for dir1 in $vfulldirlist; do
+            build_fileindex $dir1 > "$dir1/.fileindex"
+        done
+        for dir2 in $vdirlist; do
+            vcopylist="$vcopylist${dir2}/index.html\n"
+            build_index $dir2 > "$dir2/index.md"
+            mdtohtml "$dir2/index.md" > "$dir2/index.html" || die "Failed to convert $dir2 index to HTML"
+        done
         for mdfile in $(echo -e "$vfnew" | grep ".md$"); do
             htmlfilename="$(echo $mdfile | mdfilenametohtml)"
             mdtohtml $mdfile > $htmlfilename || die "Failed to convert $mdfile to HTML"
@@ -89,11 +102,14 @@ main() {
         echo -e "$vcurrentfilelist" > "$vdotfiles"
         if (test "$visrelease" = "y"); then
             rm "$vdotfiles.tmp" "$vdotfiles"
-            cp "$vstylelocation" "$vroot/$vdstname"
+            cp "$vstyle" "$vroot/$vdstname"
         fi
     else
         echo "No changes."
     fi
+    # end profiler
+    # set +x
+    # exec 2>&3 3>&-
 }
 die() {
     echo "$1" >&2 && exit 1
@@ -146,7 +162,6 @@ build_fileindex() {
     local fileindex=""
     for mdfile in \
         $(find $1 -mindepth 1 -maxdepth 1 -path "*.md" -not -name "index.md"); do
-        # grab the date. modify this if your date spec is different
         local D=$(cat $mdfile | grep -Po '^[\_]*Last [[:alpha:]]*: \K[^\_]*' \
             || echo "(No date)")
         local T=$(head -n 5 $mdfile | grep -Po "^# \K.*$" | rmhtmltags)
@@ -166,7 +181,7 @@ build_index() {
         index="$index\n\n### $(basename $subdir | titlize)\n"
         index="$index$(head -n 10 "$subdir/.fileindex" | \
             sed "s|](|]($(basename $subdir)/|g")"
-        index="$index$(test $(wc -l < "$subdir/.fileindex") -gt 10 \
+        index="$index$(test $(wc -l < "$subdir/.fileindex") -gt 11 \
             && echo "\n\n[More →]" \
             || echo "\n\n[Dedicated page →]")($(basename $subdir)/index.html)"
     done
@@ -183,10 +198,10 @@ build_index() {
 gennav() {
     if (echo "$1" | grep -qv "index.md"); then
         dotdot="index.html"
-        echo $(echo -e "$(for i in $(echo $1 | rev | cut -d '/' -f 2- | rev | sed "s|$vroot/$vsrcname||" | grep -o "\b[^/]*" | tac); do echo "[$(echo $i | titlize)]($dotdot) >"; dotdot="../$dotdot"; done; echo "[$vblogname]($dotdot) >")" | tac) | pandoc -f markdown -t html
+        echo $(echo -e "$(for i in $(echo $1 | rev | cut -d '/' -f 2- | rev | sed "s|$vroot/$vsrcname||" | grep -o "\b[^/]*" | tac); do echo "[$(echo $i | titlize)]($dotdot) >"; dotdot="../$dotdot"; done; echo "[$vblogname]($dotdot) >")" | tac) | $vmdconvcommand
     elif [ "$1" != "$vroot/$vsrcname/index.md" ]; then
         dotdot="../index.html"
-        echo $(echo -e "$(for i in $(echo $1 | rev | cut -d '/' -f 3- | rev | sed "s|$vroot/$vsrcname||" | grep -o "\b[^/]*" | tac); do echo "[$(echo $i | titlize)]($dotdot) >"; dotdot="../$dotdot"; done; echo "[$vblogname]($dotdot) >")" | tac; echo "**$(echo $1 | rev | cut -d '/' -f 2 | rev | titlize)**") | pandoc -f markdown -t html
+        echo $(echo -e "$(for i in $(echo $1 | rev | cut -d '/' -f 3- | rev | sed "s|$vroot/$vsrcname||" | grep -o "\b[^/]*" | tac); do echo "[$(echo $i | titlize)]($dotdot) >"; dotdot="../$dotdot"; done; echo "[$vblogname]($dotdot) >")" | tac; echo "**$(echo $1 | rev | cut -d '/' -f 2 | rev | titlize)**") | $vmdconvcommand
     else
         echo "<p><strong>$vblogname</strong></p>"
     fi
@@ -200,7 +215,8 @@ mdtohtml() {
     page_title="$(head -n 5 $1 | grep -Po "^# \K.*$" | rmhtmltags)" || return 1
     content="$content$(cat $vheader | sed "s|<title>|<title>$page_title|g")\n" || return 1
     content="$content$(gennav $1)\n" || return 1
-    content="$content$(text_substitutions $1 | pandoc -f markdown -t html)\n" || return 1
+    # content="$content$(text_substitutions $1 | pandoc -f markdown -t html)\n" || return 1
+    content="$content$(text_substitutions $1 | $vmdconvcommand)\n" || return 1
     content="$content$(cat $vfooter)\n" || return 1
     echo -e "$content" || return 1
 }
