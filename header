@@ -5,8 +5,8 @@
         <!-- Leave the title empty. The script would add the title in. -->
         <title></title>
         <meta name="viewport" content="width=device-width">
-        <!-- Below is the CSS location. Modify it to reflect where the CSS file is in the system. -->
-        <link rel="stylesheet" type="text/css" href="file:///home/ltlnx/Documents/Blog/ltlnx-blog-updater/style.css">
+        <!-- Below is the CSS location. Modify it to reflect where the CSS file is in the site. -->
+        <link rel="stylesheet" type="text/css" href="/style.css">
     </head>
     <body>
         <main>

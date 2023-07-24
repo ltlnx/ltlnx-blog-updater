@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog of ltlnx - All pages</title>
+    <link>https://ltlnx.tw</link>
+    <description>All pages on the website of ltlnx</description>
+    <language>zh-tw</language>
+    <copyright>Wen-Wei Kao</copyright>
+    <lastBuildDate>Sun, 23 Jul 2023 17:25:54 +0800</lastBuildDate>
+    <atom:link href="https://ltlnx.tw/rssfeed.xml" rel="self" type="application/rss+xml" />
+<item>
+ <title>All Pages / Other Pages Demo</title>
+ <link>https://ltlnx.tw/all-posts-demo.html</link>
+ <guid isPermaLink="false">all-posts-demo.html</guid>
+ <pubDate>Thu, 01 Jan 1970 00:00:00 +0800</pubDate>
+ <description><![CDATA[You can add Markdown files in the source directory without putting them
+under any category directory, and they would be classified under “Other
+Pages” (or if there’s no category, “All Pages”).]]></description>
+</item>
+<item>
+ <title>Test Post</title>
+ <link>https://ltlnx.tw/category-1/test-post.html</link>
+ <guid isPermaLink="false">category-1/test-post.html</guid>
+ <pubDate>Sun, 01 Jan 2023 00:00:00 +0800</pubDate>
+ <description><![CDATA[This is a test post to demonstrate what the script would do to every
+post.]]></description>
+</item>
+  </channel>
+</rss>
