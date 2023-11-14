@@ -1,5 +1,0 @@
-# Category Title
-
-This is a short description of the category. Again, this would appear on the top of the category page, along with the post list. The file is assumed as a Markdown file, so you can use any Markdown syntax supported by [Pandoc](pandoc.org). For example, I usually add a horizontal separator at the end of every desc file to separate this text with the file listings.
-
----

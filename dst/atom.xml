@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title>Blog of ltlnx</title>
+  <id>https://example.org/</id>
+  <updated>2023-11-14T19:39:32+08:00</updated>
+  <author>
+    <name>ltlnx</name>
+  </author>
+  <subtitle>All pages on the blog of ltlnx</subtitle>
+  <rights>ⓒ ltlnx 2023.</rights>
+  <link href="https://example.org/atom.xml" rel="self"/>
+  <entry>
+    <title>example post</title>
+    <link rel="alternate" href="https://example.org/2023/example.html"/>
+    <id>https://example.org/2023/example.html/</id>
+    <author>
+      <name>ltlnx</name>
+    </author>
+    <updated>2023-11-14T00:00:00+08:00</updated>
+    <summary>This post is an example post. If the post is in the "sticky" folder, it won't have a date in the URL, and would be directly put in the base directory instead. Useful for non-post material like about pages.</summary>
+  </entry>
+  <entry>
+    <title>about post</title>
+    <link rel="alternate" href="https://example.org/about.html"/>
+    <id>https://example.org/about.html/</id>
+    <author>
+      <name>ltlnx</name>
+    </author>
+    <updated>2023-11-14T00:00:00+08:00</updated>
+    <summary>This post is an about post. If the post is in the "sticky" folder, it won't have a date in the URL, and would be directly put in the base directory instead. Useful for non-post material like about pages.</summary>
+  </entry>
+  <entry>
+    <title>index post</title>
+    <link rel="alternate" href="https://example.org/index.html"/>
+    <id>https://example.org/index.html/</id>
+    <author>
+      <name>ltlnx</name>
+    </author>
+    <updated>2023-11-14T00:00:00+08:00</updated>
+    <summary>This post is an index post. If the post is in the "sticky" folder, it won't have a date in the URL, and would be directly put in the base directory instead. Useful for non-post material like about pages.</summary>
+  </entry>
+</feed>
