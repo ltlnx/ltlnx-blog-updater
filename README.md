@@ -1,6 +1,8 @@
 # ltlnx's blog updater
 This is ltlnx's blog updater: it takes a source directory with Markdown files, a "header" and a "footer", converts them to HTML, and copies them to the desired destination directory.
 
+A fully-fledged demo that uses this generator can be found at <https://ltlnx.tw>.
+
 ### Prerequisites
 - any bourne-compatible shell (tested with ksh, bash, ash, dash, and sh)
 - GNU grep (or a grep supporting `-P`)
