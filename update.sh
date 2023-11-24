@@ -132,7 +132,7 @@ html {
 body {overflow-x: hidden}
 pre, blockquote {overflow-x: auto; background: #e9e6e4; padding: 1em}
 blockquote {margin: 0; border-left: 0.75em solid}
-blockquote * {margin: 0 0 0.5em 0}
+blockquote > * {margin: 0 0 0.25em 0.25em}
 ul, ol {padding-left: 1em}
 a {color: #465aa4}
 #header a, .links a {text-decoration: none}
@@ -385,6 +385,7 @@ done
 # make year pages
 # extract years out of the archive
 cat "$vroot/$vdstname/archive.md" | grep -Po "(?<=date\">)[0-9]{4}" | sort -u | while read -r year; do
+    mkdir -p "$vroot/$vdstname/$year"
     cat "$vroot/$vdstname/archive.md" | grep -P "(?<=date\">)$year" > "$vroot/$vdstname/$year/index.md"
     content="$(cat "$vroot/$vdstname/$year/index.md" | sort -rn)"
     cat > "$vroot/${vdstname}/$year/index.html" <<EOF
@@ -406,16 +407,15 @@ $(cat "$vroot/$vheadername" | sed "s|<title>|<title>$title - $vtitle|")
 $(printf "$desc\n\n$content\n" | $vmdconvcommand)
 $(cat "$vroot/$vfootername")
 EOF
-    echo "- [$title]($link)" >> "$vroot/$vdstname/tags/index.md"
+    echo " [$title]($link)" >> "$vroot/$vdstname/tags/index.md"
 done
 
 # make tag page
-# add description if present, if not add "No description"
 desc="$(cat "$vroot/$vsrcname/tags.desc")" || desc="No description.\n"
-content="$(cat "$vroot/$vdstname/tags/index.md")"
+tagscontent="$(cat "$vroot/$vdstname/tags/index.md")"
 cat > "$vroot/$vdstname/tags/index.html" <<EOF
 $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Tags - $vtitle|")
-$(printf "$desc\n\n\n$content\n" | $vmdconvcommand)
+$(printf "$desc\n\n\n$(printf "$tagscontent" | sed 's/^/-/g')\n" | $vmdconvcommand)
 $(cat "$vroot/$vfootername")
 EOF
 
@@ -424,9 +424,27 @@ desc="$(cat "$vroot/$vsrcname/archive.desc")" || desc="No description.\n"
 content="$(cat "$vroot/$vdstname/archive.md" | sort -rn)"
 cat > "$vroot/$vdstname/archive.html" <<EOF
 $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Archive - $vtitle|")
-$(printf "$desc\n\n$content\n" | $vmdconvcommand)
+$(printf "$desc\n\nTags:$tagscontent\n\n$content\n" | $vmdconvcommand)
 $(cat "$vroot/$vfootername")
 EOF
+# make tag page
+# add description if present, if not add "No description"
+# desc="$(cat "$vroot/$vsrcname/tags.desc")" || desc="No description.\n"
+# content="$(cat "$vroot/$vdstname/tags/index.md")"
+# cat > "$vroot/$vdstname/tags/index.html" <<EOF
+# $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Tags - $vtitle|")
+# $(printf "$desc\n\n\n$content\n" | $vmdconvcommand)
+# $(cat "$vroot/$vfootername")
+# EOF
+# 
+# # make archive page
+# desc="$(cat "$vroot/$vsrcname/archive.desc")" || desc="No description.\n"
+# content="$(cat "$vroot/$vdstname/archive.md" | sort -rn)"
+# cat > "$vroot/$vdstname/archive.html" <<EOF
+# $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Archive - $vtitle|")
+# $(printf "$desc\n\n$content\n" | $vmdconvcommand)
+# $(cat "$vroot/$vfootername")
+# EOF
 
 # close RSS generation
 echo "</feed>" >> "$vroot/$vdstname/$vfeedname"
