@@ -159,7 +159,7 @@ create_examplemd() {
     cat > "$1" <<EOF
 # $2 post
 
-This post is an $2 post. If the post is in the "sticky" folder, it won't have a date in the URL, and would be directly put in the base directory instead. Useful for non-post material like about pages.
+This post is an $2 post. If the post is in the "sticky" folder, it won't show in the archives, but otherwise you can put your Markdown files anywhere in the source directory.
 
 Add tags at the end of the post starting with \`Tags: \` and a list of comma-separated tags.
 
@@ -353,12 +353,8 @@ find "$vroot/$vsrcname" -path "*.md" | while read -r file; do
     # tags start with "Tags: " of "tags: ", and is comma-separated
     tags="$(cat "$file" | grep -Po "^[Tt]ags: \K.*" | grep -Po '(?!( ))[^,]*' | sed 's| |-|g')" 
     test "$tags" && htmltaglist="<span class=\"tags\">Tags: $(printf "$tags\n" | while read -r line; do printf "<a href=\"/tags/$line.html\">$line</a> "; done)</span>"
-    if ( echo "$file" | grep -q "$vsrcname/sticky/" ) || [ -z "$date" ]; then
-        link="/$filebn.html"
-    else
-        link="/$year/$filebn.html"
-        mkdir -p "$vroot/$vdstname/$year"
-    fi
+    # just define the link as the filename, no more categorizing by year
+    link="/$filebn.html"
     # duplicate filename solving
     if [ -f "$vroot/${vdstname}${link}" ]; then
         link="$(echo "$link" | sed "s|.html|-$(find "$vroot/$vdstname" -name "$filebn-[0-9]*.html" | wc -l).html|")"
@@ -372,7 +368,10 @@ $(cat "$vroot/$vfootername")
 EOF
     entry="- <span class=\"date\">$date</span> [$title]($link)"
     # throw the entry into the appropriate catalogs
-    echo "$entry" >> "$vroot/$vdstname/archive.md"
+    # throw it into the archive if it's not a sticky post
+    if ! (echo "$file" | grep -q "$vsrcname/sticky"); then
+        echo "$entry" >> "$vroot/$vdstname/archive.md"
+    fi
     if [ -n "$tags" ]; then
         printf "$tags\n" | while read -r tag; do
             echo "$entry" >> "$vroot/$vdstname/tags/$tag.md"
@@ -380,19 +379,6 @@ EOF
     fi
     # generate rss entry
     genrss
-done
-
-# make year pages
-# extract years out of the archive
-cat "$vroot/$vdstname/archive.md" | grep -Po "(?<=date\">)[0-9]{4}" | sort -u | while read -r year; do
-    mkdir -p "$vroot/$vdstname/$year"
-    cat "$vroot/$vdstname/archive.md" | grep -P "(?<=date\">)$year" > "$vroot/$vdstname/$year/index.md"
-    content="$(cat "$vroot/$vdstname/$year/index.md" | sort -rn)"
-    cat > "$vroot/${vdstname}/$year/index.html" <<EOF
-$(cat "$vroot/$vheadername" | sed "s|<title>|<title>$year - $vtitle|")
-$(printf "# $year\n\n$content\n" | $vmdconvcommand)
-$(cat "$vroot/$vfootername")
-EOF
 done
 
 # make tag indexes into proper pages
@@ -427,24 +413,6 @@ $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Archive - $vtitle|")
 $(printf "$desc\n\nTags:$tagscontent\n\n$content\n" | $vmdconvcommand)
 $(cat "$vroot/$vfootername")
 EOF
-# make tag page
-# add description if present, if not add "No description"
-# desc="$(cat "$vroot/$vsrcname/tags.desc")" || desc="No description.\n"
-# content="$(cat "$vroot/$vdstname/tags/index.md")"
-# cat > "$vroot/$vdstname/tags/index.html" <<EOF
-# $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Tags - $vtitle|")
-# $(printf "$desc\n\n\n$content\n" | $vmdconvcommand)
-# $(cat "$vroot/$vfootername")
-# EOF
-# 
-# # make archive page
-# desc="$(cat "$vroot/$vsrcname/archive.desc")" || desc="No description.\n"
-# content="$(cat "$vroot/$vdstname/archive.md" | sort -rn)"
-# cat > "$vroot/$vdstname/archive.html" <<EOF
-# $(cat "$vroot/$vheadername" | sed "s|<title>|<title>Archive - $vtitle|")
-# $(printf "$desc\n\n$content\n" | $vmdconvcommand)
-# $(cat "$vroot/$vfootername")
-# EOF
 
 # close RSS generation
 echo "</feed>" >> "$vroot/$vdstname/$vfeedname"
