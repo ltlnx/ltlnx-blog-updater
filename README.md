@@ -43,9 +43,10 @@ To specify the date of a post, you can do one of the following:
 
 Both would work equally fine. Just make sure that you don't specify two dates for the same post, or the updater script would pick the first one.
 
-By default, the updater would put posts with dates under their respective year (a post named `hello.md` with the date `2023-11-03` would be converted to `2023/hello.html`), and posts without dates directly in the destination directory (`dst` by default).
+### Sticky posts
+If the post is in the `src/sticky` folder, it wouldn't show up in the `archive.html` page but still show up in the tag pages. Useful for the homepage (`src/sticky/index.md`), about page (`src/sticky/about.md`) and the like.
 
-### "Themeing"
+### "Theming"
 To "theme" your site, add a CSS file, preferably named `style.css`, in the source directory. A minimal example is included after you run `./update.sh init`. You can inspect the generated HTML (with Firefox's inspector, a text editor or whatever) and determine which target to write styles for.
 
 ### RSS (Atom) and a sitemap

@@ -252,7 +252,7 @@ EOF
     for item in $(find . -name "*.html" -printf "%P\n"); do
         # get info of markdown file
         it_loc="${vurl}/$item"
-        it_lastmod="$(date -d "$(cat "$item" | grep -Po '[\_]*Last [[:alpha:]]*: \K[^\<]*' || cat "$item" | grep -o "^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}$" || date +"%Y-%m-%d")" -R)"
+        it_lastmod="$(date -d "$(cat "$item" | grep -Po '^<p>.*[\_]*Last [[:alpha:]]*: \K[^\<]*' || cat "$item" | grep -o "^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}$" || date +"%Y-%m-%d")" -R)"
         cat >> "sitemap.xml" <<EOF
 <url>
  <loc>$it_loc</loc>
@@ -282,6 +282,7 @@ case "$1" in
         ;;
     gensitemap)
         gensitemap
+        exit 0
         ;;
     serve)
         cd "$vroot"/"$vdstname" || exit 1
