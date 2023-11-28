@@ -139,6 +139,7 @@ a {color: #465aa4}
 #sitename, .links a:hover {color: #7d6658}
 #header a, .links a, .tags a {padding: 0 0.1em 0 0}
 hr {border: 0.75px solid}
+figure, img, video {width: 100%; max-width: 640px}
 EOF
 }
 

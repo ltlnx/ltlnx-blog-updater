@@ -20,6 +20,12 @@ There may be something missing here but in general, a Linux system with pandoc i
 6. Run the script again.
 7. Copy the generated files to your web server directory, or if you have python3 installed, run `./update.sh serve` and go to [0.0.0.0:8000](http://0.0.0.0:8000) with your preferred web browser.
 
+### Editing the config file
+The config file, `.updaterc`, contains all parameters the script needs. The comments in the file should be self-explanatory, but here are some tips:
+
+- For `vroot`, if you plan to run the script from another directory, please substitute it with an _absolute_ path (i.e. `/home/ltlnx/blog` instead of `.`).
+- It would be beneficial to explore the different Markdown flavors pandoc supports, and determine the actual `vmdconvcommand` you want to use. For <https://ltlnx.tw> I use `pandoc -f commonmark+footnotes -t html`.
+
 ### Writing blog posts and tag descriptions
 Both blog posts and tag descriptions should be Markdown files in the source directory (`src` by default). Blog posts have the suffix `.md`, and descriptions have the suffix `.desc`. Say if you want to add a new tag named "tech":
 
